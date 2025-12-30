@@ -1,0 +1,248 @@
+.mesh-peer-list {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.peer-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.peer-list-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.mesh-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  background: #f3f4f6;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.mesh-status.active {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.mesh-status.inactive {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.mesh-status.active .status-indicator {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.peer-count {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 16px;
+}
+
+.scanning-indicator {
+  text-align: center;
+  padding: 40px 20px;
+  color: #6b7280;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e5e7eb;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.peer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.peer-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.peer-item:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.peer-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.peer-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.peer-info {
+  flex: 1;
+}
+
+.peer-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 4px;
+}
+
+.peer-uuid {
+  font-size: 12px;
+  font-family: monospace;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+
+.peer-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.separator {
+  color: #d1d5db;
+}
+
+.peer-status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.signal-strength {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 24px;
+}
+
+.signal-bar {
+  width: 4px;
+  background: #d1d5db;
+  border-radius: 2px;
+  transition: background 0.3s;
+}
+
+.signal-bar:nth-child(1) { height: 6px; }
+.signal-bar:nth-child(2) { height: 12px; }
+.signal-bar:nth-child(3) { height: 18px; }
+.signal-bar:nth-child(4) { height: 24px; }
+
+.signal-strength.excellent .signal-bar.active { background: #10b981; }
+.signal-strength.good .signal-bar.active { background: #3b82f6; }
+.signal-strength.fair .signal-bar.active { background: #f59e0b; }
+.signal-strength.weak .signal-bar.active { background: #ef4444; }
+
+.rssi-value {
+  font-size: 12px;
+  color: #6b7280;
+  font-family: monospace;
+}
+
+.node-status {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #9ca3af;
+}
+
+.empty-state svg {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
+  color: #d1d5db;
+}
+
+.empty-state p {
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0 0 8px;
+  color: #6b7280;
+}
+
+.empty-state small {
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mesh-peer-list {
+    background: #1f2937;
+  }
+
+  .peer-list-header h2,
+  .peer-name {
+    color: #f9fafb;
+  }
+
+  .peer-item {
+    background: #374151;
+    border-color: #4b5563;
+  }
+
+  .peer-item:hover {
+    background: #4b5563;
+    border-color: #6b7280;
+  }
+}

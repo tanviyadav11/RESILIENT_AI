@@ -1,0 +1,15 @@
+# Python Bluetooth Mesh - Dependencies
+
+# Core dependencies
+bluetooth-python==0.22
+PyBluez==0.23
+
+# Cryptography
+pycryptodome==3.19.0
+
+# Utilities
+python-dotenv==1.0.0
+
+# Optional: For testing and debugging
+pytest==7.4.3
+pytest-asyncio==0.21.1

@@ -1,0 +1,482 @@
+.citizen-dashboard {
+    min-height: 100vh;
+    background: var(--bg-secondary);
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    flex-direction: column;
+    transition: background-color 0.3s ease;
+}
+
+/* Header */
+.dashboard-header {
+    background: var(--bg-card);
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow-sm);
+    z-index: 10;
+    transition: background-color 0.3s ease;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.shield-icon {
+    font-size: 28px;
+}
+
+.header-text h1 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.profile-icon-btn {
+    background: var(--hover-bg);
+    border: none;
+    font-size: 18px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.profile-icon-btn:hover {
+    background: var(--hover-border);
+    color: var(--text-primary);
+}
+
+/* Main Content */
+.dashboard-content-centered {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    gap: 40px;
+    max-width: 480px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* SOS Section */
+.sos-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-top: 20px;
+}
+
+.sos-main-button {
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #ef4444, #dc2626);
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(220, 38, 38, 0.4),
+        inset 0 2px 5px rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 2;
+}
+
+.sos-main-button::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    border-radius: 50%;
+    border: 2px solid rgba(239, 68, 68, 0.3);
+    animation: pulse-ring 2s infinite;
+    z-index: -1;
+}
+
+.sos-main-button::after {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: -20px;
+    right: -20px;
+    bottom: -20px;
+    border-radius: 50%;
+    border: 2px solid rgba(239, 68, 68, 0.15);
+    animation: pulse-ring 2s infinite 0.5s;
+    z-index: -1;
+}
+
+@keyframes pulse-ring {
+    0% {
+        transform: scale(0.95);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1.15);
+        opacity: 0;
+    }
+}
+
+.sos-main-button:active {
+    transform: scale(0.95);
+}
+
+.sos-text {
+    font-size: 48px;
+    font-weight: 800;
+    color: white;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.sos-help-text {
+    margin-top: 25px;
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+}
+
+/* Action Buttons Grid */
+.action-buttons-grid {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.action-btn-wrapper {
+    flex: 1;
+    aspect-ratio: 1;
+    max-width: 140px;
+}
+
+.action-btn {
+    width: 100%;
+    height: 100%;
+    background: var(--bg-card);
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    cursor: pointer;
+    box-shadow: var(--shadow-md);
+    transition: all 0.2s ease;
+    border: 1px solid var(--border-color);
+}
+
+.action-btn:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--hover-border);
+}
+
+.action-btn:active {
+    transform: translateY(-1px);
+}
+
+.action-icon {
+    font-size: 32px;
+}
+
+.action-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Specific Button Styles */
+.status-btn .action-icon {
+    filter: drop-shadow(0 2px 4px rgba(16, 185, 129, 0.2));
+}
+
+.shelters-btn .action-icon {
+    filter: drop-shadow(0 2px 4px rgba(59, 130, 246, 0.2));
+}
+
+/* Responsive Adjustments */
+@media (max-height: 700px) {
+    .dashboard-content-centered {
+        gap: 20px;
+        padding: 10px;
+    }
+
+    .sos-main-button {
+        width: 180px;
+        height: 180px;
+    }
+}
+
+.profile-icon-btn {
+    background: #f1f5f9;
+    border: none;
+    font-size: 18px;
+    color: #475569;
+    cursor: pointer;
+    padding: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.profile-icon-btn:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+
+/* Main Content */
+.dashboard-content-centered {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    gap: 40px;
+    max-width: 480px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* SOS Section */
+.sos-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-top: 20px;
+}
+
+.sos-main-button {
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #ef4444, #dc2626);
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(220, 38, 38, 0.4),
+        inset 0 2px 5px rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 2;
+}
+
+.sos-main-button::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    border-radius: 50%;
+    border: 2px solid rgba(239, 68, 68, 0.3);
+    animation: pulse-ring 2s infinite;
+    z-index: -1;
+}
+
+.sos-main-button::after {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: -20px;
+    right: -20px;
+    bottom: -20px;
+    border-radius: 50%;
+    border: 2px solid rgba(239, 68, 68, 0.15);
+    animation: pulse-ring 2s infinite 0.5s;
+    z-index: -1;
+}
+
+@keyframes pulse-ring {
+    0% {
+        transform: scale(0.95);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1.15);
+        opacity: 0;
+    }
+}
+
+.sos-main-button:active {
+    transform: scale(0.95);
+}
+
+.sos-text {
+    font-size: 48px;
+    font-weight: 800;
+    color: white;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.sos-help-text {
+    margin-top: 25px;
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+}
+
+/* Action Buttons Grid */
+.action-buttons-grid {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.action-btn-wrapper {
+    flex: 1;
+    aspect-ratio: 1;
+    max-width: 140px;
+}
+
+.action-btn {
+    width: 100%;
+    height: 100%;
+    background: white;
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05),
+        0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    transition: all 0.2s ease;
+    border: 1px solid #e2e8f0;
+}
+
+.action-btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05),
+        0 4px 6px -2px rgba(0, 0, 0, 0.025);
+    border-color: #cbd5e1;
+}
+
+.action-btn:active {
+    transform: translateY(-1px);
+}
+
+.action-icon {
+    font-size: 32px;
+}
+
+.action-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #334155;
+}
+
+/* Specific Button Styles */
+.status-btn .action-icon {
+    filter: drop-shadow(0 2px 4px rgba(16, 185, 129, 0.2));
+}
+
+.shelters-btn .action-icon {
+    filter: drop-shadow(0 2px 4px rgba(59, 130, 246, 0.2));
+}
+
+/* Responsive Adjustments */
+@media (max-height: 700px) {
+    .dashboard-content-centered {
+        gap: 20px;
+        padding: 10px;
+    }
+
+    .sos-main-button {
+        width: 180px;
+        height: 180px;
+    }
+
+    .sos-text {
+        font-size: 36px;
+    }
+
+    .action-btn-wrapper {
+        max-width: 120px;
+    }
+}
+
+/* SOS History Section */
+.sos-history-section {
+    width: 100%;
+    background: var(--bg-card);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    transition: background-color 0.3s ease;
+}
+
+.sos-history-section h3 {
+    margin: 0 0 15px 0;
+    font-size: 16px;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.sos-history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.sos-type {
+    font-weight: 600;
+    color: var(--text-primary);
+    text-transform: capitalize;
+}
+
+.sos-status {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.sos-date {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.no-alerts-text {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 14px;
+    padding: 20px 0;
+}

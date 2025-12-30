@@ -1,0 +1,269 @@
+.shelters-container {
+    min-height: 100vh;
+    background: #f5f7fa;
+    padding: 20px;
+}
+
+.shelters-header {
+    max-width: 900px;
+    margin: 0 auto 30px;
+}
+
+.back-btn {
+    background: white;
+    border: 1px solid #e5e7eb;
+    color: #6b7280;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+    background: #f9fafb;
+    transform: translateX(-5px);
+}
+
+.shelters-header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0 0 8px 0;
+}
+
+.shelters-header p {
+    font-size: 16px;
+    color: #6b7280;
+    margin: 0;
+}
+
+.location-banner {
+    max-width: 900px;
+    margin: 0 auto 20px;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+.location-icon {
+    font-size: 20px;
+}
+
+.shelters-content {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.shelters-count {
+    margin-bottom: 25px;
+}
+
+.shelters-count h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0 0 5px 0;
+}
+
+.shelters-count p {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0;
+}
+
+/* Shelter Cards */
+.shelters-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.shelter-card {
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.shelter-card:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border-color: #3b82f6;
+    transform: translateY(-2px);
+}
+
+.shelter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    gap: 15px;
+}
+
+.shelter-title {
+    flex: 1;
+}
+
+.shelter-title h3 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0 0 10px 0;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.status-badge.open {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.status-badge.full {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-badge.closed {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.shelter-distance {
+    display: flex;
+    align-items: center;
+}
+
+.distance-badge {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+/* Shelter Info */
+.shelter-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    color: #4b5563;
+}
+
+.info-icon {
+    font-size: 18px;
+}
+
+/* Facilities */
+.shelter-facilities {
+    margin-bottom: 20px;
+}
+
+.shelter-facilities h4 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0 0 12px 0;
+}
+
+.facilities-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.facility-tag {
+    background: #eff6ff;
+    color: #1e40af;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* Directions Button */
+.directions-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+.directions-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.directions-btn:active {
+    transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .shelters-container {
+        padding: 15px;
+    }
+
+    .shelters-header h1 {
+        font-size: 26px;
+    }
+
+    .shelter-card {
+        padding: 20px;
+    }
+
+    .shelter-header {
+        flex-direction: column;
+    }
+
+    .distance-badge {
+        align-self: flex-start;
+    }
+
+    .shelter-title h3 {
+        font-size: 20px;
+    }
+
+    .facilities-list {
+        gap: 6px;
+    }
+
+    .facility-tag {
+        font-size: 12px;
+        padding: 5px 10px;
+    }
+}
