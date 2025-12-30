@@ -1,0 +1,21 @@
+# Node dependencies
+node_modules/
+server/node_modules/
+
+# Cache
+.cache/
+server/.cache/
+
+# Uploads
+server/uploads/
+
+# Environment files
+.env
+
+# Logs
+npm-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
