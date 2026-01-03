@@ -38,6 +38,99 @@
 }
 
 .login-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+    animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Header */
+.login-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.login-header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+}
+
+.login-header p {
+    color: #666;
+    font-size: 15px;
+}
+
+/* Role Selection */
+.role-selection {
+    margin-bottom: 30px;
+}
+
+.role-selection h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.role-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.role-card {
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: 16px;
+    padding: 20px 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.role-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.role-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+
+
+.login-card {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(20px);
     border-radius: 24px;
@@ -132,6 +225,7 @@
     border-color: #667eea;
     background: rgba(102, 126, 234, 0.1);
     box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    font-size: 16px;
 }
 
 .role-card.active::before {
@@ -173,9 +267,10 @@
 
 .form-group label {
     display: block;
-    font-size: 14px;
-    font-weight: 600;
-    color: #333;
+    font-size: 15px;
+    font-weight: 700;
+    color: #1f2937 !important;
+    /* Highlight heading */
     margin-bottom: 8px;
 }
 
@@ -185,16 +280,20 @@
     font-size: 15px;
     border: 2px solid #e0e0e0;
     border-radius: 12px;
-    background: rgba(255, 255, 255, 0.8);
+    background: #ffffff !important;
+    /* Make black space white */
     transition: all 0.3s ease;
     font-family: inherit;
     box-sizing: border-box;
+    color: #1f2937 !important;
+    /* Ensure entered text is visible */
+    caret-color: black;
 }
 
 .form-group input:focus {
     outline: none;
     border-color: #667eea;
-    background: #fff;
+    background: var(--bg-input);
     box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
 }
 
@@ -204,7 +303,7 @@
 }
 
 .form-group input::placeholder {
-    color: #999;
+    color: #6b7280 !important;
 }
 
 /* Error Message */

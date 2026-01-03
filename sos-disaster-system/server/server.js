@@ -61,13 +61,15 @@ io.on('connection', (socket) => {
         const { sosRequestId, message } = data;
         // Broadcast message to all in the room except sender
         socket.to(`sos-${sosRequestId}`).emit('new-message', message);
-        console.log(`Message sent to room sos-${sosRequestId}`);
+        // Also broadcast globally so AdminDashboard can receive notifications for all requests
+        socket.broadcast.emit('global-new-message', { sosRequestId, message });
+        console.log(`Message sent to room sos-${sosRequestId} and globally basted`);
     });
 
     // Handle typing indicator
     socket.on('typing', (data) => {
-        const { sosRequestId, userName, isTyping } = data;
-        socket.to(`sos-${sosRequestId}`).emit('user-typing', { userName, isTyping });
+        const { sosRequestId } = data;
+        socket.to(`sos-${sosRequestId}`).emit('user-typing', data);
     });
 
     socket.on('disconnect', () => {

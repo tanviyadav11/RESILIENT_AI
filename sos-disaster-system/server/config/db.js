@@ -1,15 +1,12 @@
 const mongoose = require('mongoose');
-const { MongoMemoryServer } = require('mongodb-memory-server');
 
 const connectDB = async () => {
     try {
         console.log("Attempting to connect to MongoDB...");
 
-        // Start In-Memory MongoDB
-        const mongod = await MongoMemoryServer.create();
-        const mongoUri = mongod.getUri();
+        const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/sos-disaster-system';
 
-        console.log(`In-Memory MongoDB started at ${mongoUri}`);
+        console.log(`Connecting to: ${mongoUri}`);
 
         const conn = await mongoose.connect(mongoUri, {
             useNewUrlParser: true,
@@ -18,7 +15,8 @@ const connectDB = async () => {
 
         console.log(`MongoDB Connected: ${conn.connection.host}`);
     } catch (error) {
-        console.error(`Error: ${error.message}`);
+        console.error(`Database Connection Error: ${error.message}`);
+        console.log("Please ensure MongoDB is running or MONGO_URI is correct.");
         process.exit(1);
     }
 };

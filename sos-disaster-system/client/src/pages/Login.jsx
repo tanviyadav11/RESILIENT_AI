@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
 import api from '../services/api';
 import './Login.css';
 
 const Login = () => {
+    const { t } = useLanguage();
     const [isLogin, setIsLogin] = useState(true);
     const [formData, setFormData] = useState({
         name: '',
@@ -35,24 +37,24 @@ const Login = () => {
     const validateForm = () => {
         if (!isLogin) {
             if (!formData.name.trim()) {
-                setError('Name is required');
+                setError(t('nameRequired') || 'Name is required');
                 return false;
             }
             if (!formData.mobile.trim() || formData.mobile.length < 10) {
-                setError('Valid mobile number is required');
+                setError(t('mobileRequired') || 'Valid mobile number is required');
                 return false;
             }
             if (formData.password !== formData.confirmPassword) {
-                setError('Passwords do not match');
+                setError(t('passwordMismatch') || 'Passwords do not match');
                 return false;
             }
             if (formData.password.length < 6) {
-                setError('Password must be at least 6 characters');
+                setError(t('passwordLength') || 'Password must be at least 6 characters');
                 return false;
             }
         }
         if (!formData.email.trim() || !formData.password.trim()) {
-            setError('All fields are required');
+            setError(t('fieldsRequired') || 'All fields are required');
             return false;
         }
         return true;
@@ -66,12 +68,18 @@ const Login = () => {
         setLoading(true);
         setError('');
 
+        const email = formData.email.trim();
+        const password = formData.password.trim();
+        const name = formData.name.trim();
+        const mobile = formData.mobile.trim();
+        const role = formData.role;
+
         try {
             if (isLogin) {
                 // Login
                 const { data } = await api.post('/auth/login', {
-                    identifier: formData.email, // Using email field as generic identifier
-                    password: formData.password
+                    identifier: email, // Using email field as generic identifier
+                    password: password
                 });
                 localStorage.setItem('userInfo', JSON.stringify(data));
 
@@ -84,11 +92,11 @@ const Login = () => {
             } else {
                 // Register
                 const { data } = await api.post('/auth/register', {
-                    name: formData.name,
-                    email: formData.email,
-                    mobile: formData.mobile,
-                    password: formData.password,
-                    role: formData.role
+                    name,
+                    email,
+                    mobile,
+                    password,
+                    role
                 });
                 localStorage.setItem('userInfo', JSON.stringify(data));
 
@@ -107,10 +115,10 @@ const Login = () => {
 
             // Check if it's a network error (server not reachable)
             if (!err.response) {
-                setError('Cannot connect to server. Please ensure the backend is running on http://localhost:5000');
+                setError(t('serverError') || 'Cannot connect to server. Please ensure the backend is running on http://localhost:5000');
             } else {
                 // Show specific error from backend
-                const errorMessage = err.response?.data?.message || err.response?.data?.error || 'An error occurred. Please try again.';
+                const errorMessage = err.response?.data?.message || err.response?.data?.error || t('genericError') || 'An error occurred. Please try again.';
                 setError(errorMessage);
             }
         } finally {
@@ -137,29 +145,29 @@ const Login = () => {
                 <div className="login-card">
                     {/* Header */}
                     <div className="login-header">
-                        <h1>{isLogin ? 'Welcome Back' : 'Create Account'}</h1>
-                        <p>{isLogin ? 'Sign in to access your dashboard' : 'Register to get started'}</p>
+                        <h1>{isLogin ? t('welcomeBack') : t('createAccount')}</h1>
+                        <p>{isLogin ? t('signInToAccess') : t('registerToGetStarted')}</p>
                     </div>
 
                     {/* Role Selection */}
                     <div className="role-selection">
-                        <h3>I am a:</h3>
+                        <h3>{t('iAmA')}</h3>
                         <div className="role-cards">
                             <div
                                 className={`role-card ${formData.role === 'citizen' ? 'active' : ''}`}
                                 onClick={() => handleRoleSelect('citizen')}
                             >
                                 <div className="role-icon">👤</div>
-                                <h4>Citizen</h4>
-                                <p>Report emergencies and request help</p>
+                                <h4>{t('citizen')}</h4>
+                                <p>{t('citizenRoleDesc')}</p>
                             </div>
                             <div
                                 className={`role-card ${formData.role === 'authority' ? 'active' : ''}`}
                                 onClick={() => handleRoleSelect('authority')}
                             >
                                 <div className="role-icon">🚨</div>
-                                <h4>Authority</h4>
-                                <p>Respond to emergencies and manage requests</p>
+                                <h4>{t('authority')}</h4>
+                                <p>{t('authorityRoleDesc')}</p>
                             </div>
                         </div>
                     </div>
@@ -168,65 +176,65 @@ const Login = () => {
                     <form onSubmit={handleSubmit} className="login-form">
                         {!isLogin && (
                             <div className="form-group">
-                                <label>Full Name</label>
+                                <label>{t('name')}</label>
                                 <input
                                     type="text"
                                     name="name"
                                     value={formData.name}
                                     onChange={handleChange}
-                                    placeholder="Enter your full name"
+                                    placeholder={t('enterFullName')}
                                     disabled={loading}
                                 />
                             </div>
                         )}
 
                         <div className="form-group">
-                            <label>{isLogin ? 'Email or Mobile Number' : 'Email Address'}</label>
+                            <label>{isLogin ? t('emailOrMobile') : t('emailAddress')}</label>
                             <input
                                 type="text"
                                 name="email"
                                 value={formData.email}
                                 onChange={handleChange}
-                                placeholder={isLogin ? "Enter email or mobile" : "Enter your email"}
+                                placeholder={isLogin ? t('enterEmailOrMobile') : t('enterEmail')}
                                 disabled={loading}
                             />
                         </div>
 
                         {!isLogin && (
                             <div className="form-group">
-                                <label>Mobile Number</label>
+                                <label>{t('mobileNumber')}</label>
                                 <input
                                     type="text"
                                     name="mobile"
                                     value={formData.mobile}
                                     onChange={handleChange}
-                                    placeholder="Enter your mobile number"
+                                    placeholder={t('enterMobile')}
                                     disabled={loading}
                                 />
                             </div>
                         )}
 
                         <div className="form-group">
-                            <label>Password</label>
+                            <label>{t('password')}</label>
                             <input
                                 type="password"
                                 name="password"
                                 value={formData.password}
                                 onChange={handleChange}
-                                placeholder="Enter your password"
+                                placeholder={t('enterPassword')}
                                 disabled={loading}
                             />
                         </div>
 
                         {!isLogin && (
                             <div className="form-group">
-                                <label>Confirm Password</label>
+                                <label>{t('confirmPassword')}</label>
                                 <input
                                     type="password"
                                     name="confirmPassword"
                                     value={formData.confirmPassword}
                                     onChange={handleChange}
-                                    placeholder="Confirm your password"
+                                    placeholder={t('confirmPasswordPlaceholder')}
                                     disabled={loading}
                                 />
                             </div>
@@ -243,16 +251,17 @@ const Login = () => {
                             className="btn-submit"
                             disabled={loading}
                         >
-                            {loading ? 'Please wait...' : (isLogin ? 'Sign In' : 'Create Account')}
+                            {loading ? t('pleaseWait') : (isLogin ? t('signIn') : t('createAccount'))}
                         </button>
                     </form>
 
                     {/* Toggle Mode */}
                     <div className="toggle-mode">
                         <p>
-                            {isLogin ? "Don't have an account? " : "Already have an account? "}
+                            {isLogin ? t('dontHaveAccount') : t('alreadyHaveAccount')}
+                            {" "}
                             <span onClick={toggleMode} className="toggle-link">
-                                {isLogin ? 'Register here' : 'Sign in here'}
+                                {isLogin ? t('registerHere') : t('signInHere')}
                             </span>
                         </p>
                     </div>

@@ -1,7 +1,7 @@
 .citizen-dashboard {
     min-height: 100vh;
     background: var(--bg-secondary);
-    font-family: 'Arial', sans-serif;
+    font-family: inherit;
     display: flex;
     flex-direction: column;
     transition: background-color 0.3s ease;
@@ -66,7 +66,7 @@
     justify-content: center;
     padding: 20px;
     gap: 40px;
-    max-width: 480px;
+    max-width: 1100px;
     margin: 0 auto;
     width: 100%;
 }
@@ -144,7 +144,6 @@
     font-size: 48px;
     font-weight: 800;
     color: white;
-    letter-spacing: 2px;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
@@ -259,7 +258,7 @@
     justify-content: center;
     padding: 20px;
     gap: 40px;
-    max-width: 480px;
+    max-width: 1100px;
     margin: 0 auto;
     width: 100%;
 }
@@ -337,7 +336,6 @@
     font-size: 48px;
     font-weight: 800;
     color: white;
-    letter-spacing: 2px;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
@@ -443,30 +441,58 @@
 }
 
 .sos-history-section h3 {
-    margin: 0 0 15px 0;
-    font-size: 16px;
+    margin: 10px 0 20px 0;
+    font-size: 18px;
     color: var(--text-primary);
-    font-weight: 600;
+    font-weight: 700;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
 }
 
 .sos-history-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 15px;
+}
+
+.sos-history-card {
+    background: var(--bg-primary);
+    border-radius: 12px;
+    padding: 15px;
+    border: 1px solid var(--border-color);
+}
+
+.sos-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    gap: 10px;
 }
 
 .sos-type {
-    font-weight: 600;
+    font-weight: 700;
     color: var(--text-primary);
-    text-transform: capitalize;
+}
+
+.label-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.type-group {
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
 .sos-status {
-    font-size: 12px;
-    font-weight: 600;
-    padding: 4px 8px;
-    border-radius: 12px;
-    background: rgba(0, 0, 0, 0.05);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 5px 10px;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.04);
 }
 
 .sos-date {
@@ -479,4 +505,56 @@
     color: var(--text-muted);
     font-size: 14px;
     padding: 20px 0;
+}
+
+/* Laptop Optimization */
+@media (min-width: 992px) {
+    .dashboard-content-centered {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        grid-template-areas:
+            "sos alerts"
+            "history history";
+        gap: 60px;
+        align-items: center;
+        padding: 40px;
+    }
+
+    .sos-container {
+        grid-area: sos;
+    }
+
+    .action-buttons-grid {
+        grid-area: alerts;
+        flex-direction: column;
+        gap: 30px;
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .action-btn-wrapper {
+        max-width: none;
+        width: 100%;
+    }
+
+    .action-btn {
+        flex-direction: row;
+        padding: 30px;
+        gap: 20px;
+        justify-content: flex-start;
+    }
+
+    .sos-history-section {
+        grid-area: history;
+        margin-top: 20px;
+    }
+
+    .sos-main-button {
+        width: 350px;
+        height: 350px;
+    }
+
+    .sos-text {
+        font-size: 72px;
+    }
 }

@@ -28,6 +28,7 @@ const ChatWindow = ({ sosRequestId, onClose, currentUser }) => {
     // Fetch existing messages
     useEffect(() => {
         const fetchMessages = async () => {
+            if (!sosRequestId) return;
             try {
                 const { data } = await api.get(`/chat/${sosRequestId}`);
                 setMessages(data);
@@ -42,6 +43,7 @@ const ChatWindow = ({ sosRequestId, onClose, currentUser }) => {
 
         // Mark messages as read
         const markAsRead = async () => {
+            if (!sosRequestId || !currentUser?._id) return;
             try {
                 await api.patch(`/chat/${sosRequestId}/read`, {
                     readerId: currentUser._id
@@ -51,7 +53,7 @@ const ChatWindow = ({ sosRequestId, onClose, currentUser }) => {
             }
         };
         markAsRead();
-    }, [sosRequestId, currentUser._id]);
+    }, [sosRequestId, currentUser?._id]);
 
     // Socket.io setup
     useEffect(() => {
@@ -66,9 +68,10 @@ const ChatWindow = ({ sosRequestId, onClose, currentUser }) => {
         });
 
         // Listen for typing indicator
-        socketRef.current.on('user-typing', ({ userName, isTyping }) => {
+        socketRef.current.on('user-typing', ({ userName, isTyping, userRole }) => {
             if (isTyping) {
-                setTyping(`${userName} ${t('isTyping')}...`);
+                const displayName = (userRole === 'authority' || userRole === 'admin') ? 'AI Agent' : userName;
+                setTyping(`${displayName} ${t('isTyping')}...`);
             } else {
                 setTyping(false);
             }
@@ -116,6 +119,7 @@ const ChatWindow = ({ sosRequestId, onClose, currentUser }) => {
         socketRef.current.emit('typing', {
             sosRequestId,
             userName: currentUser.name,
+            userRole: currentUser.role,
             isTyping: true
         });
 
@@ -129,6 +133,7 @@ const ChatWindow = ({ sosRequestId, onClose, currentUser }) => {
             socketRef.current.emit('typing', {
                 sosRequestId,
                 userName: currentUser.name,
+                userRole: currentUser.role,
                 isTyping: false
             });
         }, 2000);
@@ -146,7 +151,7 @@ const ChatWindow = ({ sosRequestId, onClose, currentUser }) => {
                 <div className="chat-header">
                     <div>
                         <h3>{t('chat')}</h3>
-                        <span className="chat-subtitle">SOS #{sosRequestId.slice(-6)}</span>
+                        <span className="chat-subtitle">SOS #{sosRequestId?.toString().slice(-6) || '...'}</span>
                     </div>
                     <button className="close-btn" onClick={onClose}>✕</button>
                 </div>
@@ -161,9 +166,13 @@ const ChatWindow = ({ sosRequestId, onClose, currentUser }) => {
                         messages.map((msg, index) => (
                             <div
                                 key={msg._id || index}
-                                className={`message ${msg.senderId._id === currentUser._id ? 'sent' : 'received'}`}
+                                className={`message ${(msg.senderId?._id || msg.senderId) === (currentUser?._id) ? 'sent' : 'received'}`}
                             >
-                                <div className="message-sender">{msg.senderId.name}</div>
+                                <div className="message-sender">
+                                    {msg.senderId?.role === 'authority' || msg.senderId?.role === 'admin'
+                                        ? 'AI Agent'
+                                        : (msg.senderId?.name || 'User')}
+                                </div>
                                 <div className="message-content">{msg.content}</div>
                                 <div className="message-time">{formatTime(msg.createdAt)}</div>
                             </div>

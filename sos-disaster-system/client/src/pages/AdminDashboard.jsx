@@ -23,6 +23,8 @@ const AdminDashboard = () => {
     const [resourceUnit, setResourceUnit] = useState('');
     const [activeChatRequest, setActiveChatRequest] = useState(null);
     const [currentUser, setCurrentUser] = useState(null);
+    const [unreadMessages, setUnreadMessages] = useState({}); // { requestId: count }
+    const [focusLocation, setFocusLocation] = useState(null);
 
     // Check if user is authorized (authority or admin only)
     useEffect(() => {
@@ -57,6 +59,24 @@ const AdminDashboard = () => {
             setRequests((prev) => {
                 const updated = prev.map(req => req._id === updatedRequest._id ? updatedRequest : req);
                 return sortRequests(updated);
+            });
+        });
+
+        // Listen for global new messages
+        newSocket.on('global-new-message', ({ sosRequestId, message }) => {
+            setRequests(prev => {
+                const request = prev.find(r => r._id === sosRequestId);
+                if (request && message.senderRole === 'citizen') {
+                    // Update focus location to pin the source
+                    setFocusLocation([request.location.latitude, request.location.longitude]);
+
+                    // Update unread count
+                    setUnreadMessages(prevUnread => ({
+                        ...prevUnread,
+                        [sosRequestId]: (prevUnread[sosRequestId] || 0) + 1
+                    }));
+                }
+                return prev;
             });
         });
 
@@ -148,33 +168,42 @@ const AdminDashboard = () => {
     };
 
     return (
-        <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
+        <div className="admin-container" style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
+            <h1 className="admin-title" style={{ color: 'var(--text-primary)', marginBottom: '25px', fontSize: '32px', fontWeight: '800' }}>
+                🛡️ {t('authorityDashboard') || t('emergencyDashboard')}
+            </h1>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
                 <div>
                     <select
                         value={filter}
                         onChange={(e) => setFilter(e.target.value)}
-                        style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }}
+                        style={{
+                            padding: '10px',
+                            borderRadius: '8px',
+                            border: '1px solid var(--border-color)',
+                            background: 'var(--bg-card)',
+                            color: 'var(--text-primary)'
+                        }}
                     >
-                        <option value="all">All Types</option>
-                        <option value="flood">🌊 Flood</option>
-                        <option value="earthquake">🌍 Earthquake</option>
-                        <option value="storm">⛈️ Storm</option>
-                        <option value="landslide">🪨 Landslide</option>
-                        <option value="wildfire">🔥 Wildfire</option>
-                        <option value="avalanche">🏔️ Avalanche</option>
-                        <option value="heat-wave">🌡️ Heat Wave</option>
-                        <option value="cold-wave">❄️ Cold Wave</option>
-                        <option value="sinkhole">🕳️ Sinkhole</option>
+                        <option value="all">{t('allTypes') || 'All Types'}</option>
+                        <option value="flood">🌊 {t('flood')}</option>
+                        <option value="earthquake">🌍 {t('earthquake')}</option>
+                        <option value="storm">⛈️ {t('storm')}</option>
+                        <option value="landslide">🪨 {t('landslide')}</option>
+                        <option value="wildfire">🔥 {t('wildfire')}</option>
+                        <option value="avalanche">🏔️ {t('avalanche')}</option>
+                        <option value="heat-wave">🌡️ {t('heatWave')}</option>
+                        <option value="cold-wave">❄️ {t('coldWave')}</option>
+                        <option value="sinkhole">🕳️ {t('sinkhole')}</option>
                     </select>
                 </div>
                 <button
                     onClick={handleProfileClick}
                     style={{
-                        background: '#f1f5f9',
+                        background: 'var(--bg-secondary)',
                         border: 'none',
                         fontSize: '18px',
-                        color: '#475569',
+                        color: 'var(--text-secondary)',
                         cursor: 'pointer',
                         padding: '0',
                         width: '36px',
@@ -186,12 +215,12 @@ const AdminDashboard = () => {
                         transition: 'all 0.2s'
                     }}
                     onMouseEnter={(e) => {
-                        e.target.style.background = '#e2e8f0';
-                        e.target.style.color = '#1e293b';
+                        e.target.style.background = 'var(--hover-bg)';
+                        e.target.style.color = 'var(--text-primary)';
                     }}
                     onMouseLeave={(e) => {
-                        e.target.style.background = '#f1f5f9';
-                        e.target.style.color = '#475569';
+                        e.target.style.background = 'var(--bg-secondary)';
+                        e.target.style.color = 'var(--text-secondary)';
                     }}
                 >
                     👤
@@ -199,7 +228,7 @@ const AdminDashboard = () => {
             </div>
 
             {/* Severity Visualization */}
-            <div className="card" style={{ marginBottom: '30px', padding: '20px', background: 'white', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
+            <div className="card" style={{ marginBottom: '30px', padding: '20px', background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
                 <h3>{t('activeEmergencyDistribution')}</h3>
                 <div style={{ display: 'flex', height: '40px', borderRadius: '20px', overflow: 'hidden', marginTop: '15px' }}>
                     {stats.critical > 0 && <div style={{ width: `${(stats.critical / stats.total) * 100}%`, background: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold', fontSize: '12px' }}>{t('critical')} ({stats.critical})</div>}
@@ -207,7 +236,7 @@ const AdminDashboard = () => {
                     {stats.medium > 0 && <div style={{ width: `${(stats.medium / stats.total) * 100}%`, background: '#fbbf24', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold', fontSize: '12px', textShadow: '0 0 2px rgba(0,0,0,0.2)' }}>{t('medium')} ({stats.medium})</div>}
                     {stats.low > 0 && <div style={{ width: `${(stats.low / stats.total) * 100}%`, background: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold', fontSize: '12px' }}>{t('low')} ({stats.low})</div>}
                 </div>
-                <div style={{ display: 'flex', gap: '20px', marginTop: '10px', fontSize: '14px', color: '#666' }}>
+                <div style={{ display: 'flex', gap: '20px', marginTop: '10px', fontSize: '14px', color: 'var(--text-secondary)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#ef4444' }}></div> {t('critical')}</div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#f97316' }}></div> {t('high')}</div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#fbbf24' }}></div> {t('medium')}</div>
@@ -216,15 +245,15 @@ const AdminDashboard = () => {
             </div>
 
             <div style={{ marginBottom: '30px' }}>
-                <MapComponent requests={requests} />
+                <MapComponent requests={requests} focusLocation={focusLocation} />
             </div>
 
-            <div className="card" style={{ background: 'white', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', padding: '20px' }}>
+            <div className="card" style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-color)', padding: '20px' }}>
                 <h3>{t('incomingSOS')}</h3>
                 <div style={{ overflowX: 'auto' }}>
                     <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                         <thead>
-                            <tr style={{ borderBottom: '2px solid #eee', textAlign: 'left', color: '#666' }}>
+                            <tr style={{ borderBottom: '2px solid var(--border-color)', textAlign: 'left', color: 'var(--text-secondary)' }}>
                                 <th style={{ padding: '15px' }}>{t('priority')}</th>
                                 <th style={{ padding: '15px' }}>{t('time')}</th>
                                 <th style={{ padding: '15px' }}>{t('type')}</th>
@@ -238,7 +267,7 @@ const AdminDashboard = () => {
                         <tbody>
                             {requests.map((req) => (
                                 <React.Fragment key={req._id}>
-                                    <tr style={{ borderBottom: '1px solid #f1f1f1', backgroundColor: req.severity === 'critical' ? '#fff5f5' : 'transparent' }}>
+                                    <tr style={{ borderBottom: '1px solid var(--border-light)', backgroundColor: req.severity === 'critical' ? 'rgba(239, 68, 68, 0.1)' : 'transparent' }}>
                                         <td style={{ padding: '15px' }}>
                                             <span style={{
                                                 padding: '6px 12px',
@@ -263,22 +292,37 @@ const AdminDashboard = () => {
                                                 fontWeight: 'bold',
                                                 fontSize: '0.9rem'
                                             }}>
-                                                {req.type.toUpperCase()}
+                                                {req.type.charAt(0).toUpperCase() + req.type.slice(1)}
                                             </span>
                                         </td>
-                                        <td style={{ padding: '15px' }}>{req.location.latitude.toFixed(4)}, {req.location.longitude.toFixed(4)}</td>
+                                        <td style={{ padding: '15px', maxWidth: '200px', fontSize: '0.85rem' }}>
+                                            {req.location.address ? (
+                                                <span title={req.location.address}>{req.location.address.split(',').slice(0, 3).join(',')}...</span>
+                                            ) : (
+                                                `${req.location.latitude.toFixed(4)}, ${req.location.longitude.toFixed(4)}`
+                                            )}
+                                        </td>
                                         <td style={{ padding: '15px' }}>{req.description}</td>
                                         <td style={{ padding: '15px' }}>
                                             <span style={{
                                                 color: req.status === 'resolved' ? '#2ed573' : req.status === 'dispatched' ? '#ffa502' : '#ff4757',
                                                 fontWeight: 'bold'
                                             }}>
-                                                {req.status.toUpperCase()}
+                                                {t(`status${req.status.charAt(0).toUpperCase() + req.status.slice(1)}`)}
                                             </span>
                                         </td>
-                                        <td style={{ padding: '15px' }}>
+                                        <td style={{ padding: '15px', position: 'relative' }}>
                                             <button
-                                                onClick={() => setActiveChatRequest(req)}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setActiveChatRequest(req);
+                                                    setUnreadMessages(prev => {
+                                                        const updated = { ...prev };
+                                                        delete updated[req._id];
+                                                        return updated;
+                                                    });
+                                                    setFocusLocation([req.location.latitude, req.location.longitude]);
+                                                }}
                                                 style={{
                                                     backgroundColor: '#3b82f6',
                                                     color: 'white',
@@ -289,11 +333,32 @@ const AdminDashboard = () => {
                                                     cursor: 'pointer',
                                                     display: 'flex',
                                                     alignItems: 'center',
-                                                    justifyContent: 'center'
+                                                    justifyContent: 'center',
+                                                    position: 'relative'
                                                 }}
                                                 title={t('chat')}
                                             >
                                                 💬
+                                                {unreadMessages[req._id] > 0 && (
+                                                    <span style={{
+                                                        position: 'absolute',
+                                                        top: '-5px',
+                                                        right: '-5px',
+                                                        background: '#ef4444',
+                                                        color: 'white',
+                                                        borderRadius: '50%',
+                                                        width: '18px',
+                                                        height: '18px',
+                                                        fontSize: '10px',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        border: '2px solid white',
+                                                        fontWeight: 'bold'
+                                                    }}>
+                                                        {unreadMessages[req._id]}
+                                                    </span>
+                                                )}
                                             </button>
                                         </td>
                                         <td style={{ padding: '15px' }}>
@@ -318,7 +383,7 @@ const AdminDashboard = () => {
                                     {/* Action History Row (Simplified for now) */}
                                     {req.actionLog && req.actionLog.length > 0 && (
                                         <tr>
-                                            <td colSpan="7" style={{ padding: '0 15px 15px 15px', fontSize: '0.85rem', color: '#666' }}>
+                                            <td colSpan="8" style={{ padding: '10px 15px 15px 15px', fontSize: '0.85rem', color: 'var(--text-muted)', backgroundColor: 'var(--bg-secondary)' }}>
                                                 <strong>{t('history')}: </strong>
                                                 {req.actionLog.map((log, idx) => (
                                                     <span key={idx} style={{ marginRight: '15px' }}>
@@ -341,7 +406,7 @@ const AdminDashboard = () => {
                     position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
                     backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000
                 }}>
-                    <div style={{ background: 'white', padding: '30px', borderRadius: '12px', width: '400px', maxWidth: '90%' }}>
+                    <div style={{ background: 'var(--bg-card)', padding: '30px', borderRadius: '12px', width: '400px', maxWidth: '90%', border: '1px solid var(--border-color)' }}>
                         <h3>{modalType === 'dispatch' ? t('dispatchUnits') : t('resolveEmergency')}</h3>
 
                         {modalType === 'dispatch' && (
@@ -364,9 +429,9 @@ const AdminDashboard = () => {
                                                 padding: '6px 10px',
                                                 fontSize: '0.8rem',
                                                 borderRadius: '15px',
-                                                border: '1px solid #ddd',
-                                                background: resourceUnit.includes(item.value) ? '#e3f2fd' : 'white',
-                                                color: resourceUnit.includes(item.value) ? '#0984e3' : '#666',
+                                                border: '1px solid var(--border-color)',
+                                                background: resourceUnit.includes(item.value) ? 'var(--hover-bg)' : 'var(--bg-card)',
+                                                color: 'var(--text-primary)',
                                                 cursor: 'pointer',
                                                 transition: 'all 0.2s'
                                             }}
@@ -380,8 +445,8 @@ const AdminDashboard = () => {
                                     type="text"
                                     value={resourceUnit}
                                     onChange={(e) => setResourceUnit(e.target.value)}
-                                    placeholder="e.g. Fire Engine 5, Ambulance 102"
-                                    style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ddd' }}
+                                    placeholder={t('resourceUnitPlaceholder')}
+                                    style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-input)', color: 'var(--text-primary)' }}
                                 />
                             </div>
                         )}
@@ -391,15 +456,15 @@ const AdminDashboard = () => {
                             <textarea
                                 value={actionNote}
                                 onChange={(e) => setActionNote(e.target.value)}
-                                placeholder={t('addDetails')}
-                                style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ddd', minHeight: '80px' }}
+                                placeholder={t('notesPlaceholder')}
+                                style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid var(--border-color)', minHeight: '80px', background: 'var(--bg-input)', color: 'var(--text-primary)' }}
                             />
                         </div>
 
                         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
                             <button
                                 onClick={closeModal}
-                                style={{ padding: '10px 20px', borderRadius: '6px', border: '1px solid #ddd', background: 'white', cursor: 'pointer' }}
+                                style={{ padding: '10px 20px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-card)', color: 'var(--text-primary)', cursor: 'pointer' }}
                             >
                                 {t('cancel')}
                             </button>
@@ -418,7 +483,7 @@ const AdminDashboard = () => {
             )}
 
             {/* Chat Window */}
-            {activeChatRequest && currentUser && (
+            {activeChatRequest && currentUser && currentUser._id && (
                 <ChatWindow
                     sosRequestId={activeChatRequest._id}
                     currentUser={currentUser}

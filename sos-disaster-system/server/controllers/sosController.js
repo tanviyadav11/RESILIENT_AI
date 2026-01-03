@@ -9,9 +9,9 @@ const createSOS = async (req, res) => {
         console.log('Body:', req.body);
         console.log('File:', req.file);
 
-        const { latitude, longitude, description, type, severity, userId } = req.body;
+        const { latitude, longitude, address, description, type, severity, userId } = req.body;
 
-        console.log('Parsed data:', { latitude, longitude, description, type, severity, userId });
+        console.log('Parsed data:', { latitude, longitude, address, description, type, severity, userId });
 
         // === AI Triaging / Deduplication Logic ===
         // Check for existing active requests from the same user of the same type within the last 10 minutes
@@ -35,7 +35,7 @@ const createSOS = async (req, res) => {
         const imageUrl = req.file ? req.file.path : null;
 
         const sosRequest = new SOSRequest({
-            location: { latitude, longitude },
+            location: { latitude, longitude, address },
             imageUrl,
             description,
             type,

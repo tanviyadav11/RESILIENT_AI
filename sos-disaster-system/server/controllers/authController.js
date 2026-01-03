@@ -12,7 +12,12 @@ const generateToken = (id) => {
 // @access  Public
 const authUser = async (req, res) => {
     try {
-        const { identifier, password } = req.body;
+        let { identifier, password } = req.body;
+        if (!identifier || !password) {
+            return res.status(400).json({ message: 'Please provide email/mobile and password' });
+        }
+
+        identifier = identifier.trim().toLowerCase();
 
         // Check if identifier is email or mobile
         const user = await User.findOne({
@@ -47,16 +52,37 @@ const registerUser = async (req, res) => {
         console.log('=== Registration Request ===');
         console.log('Data:', req.body);
 
-        const { name, email, mobile, password, role } = req.body;
+        let { name, email, mobile, password, role } = req.body;
 
-        const userExists = await User.findOne({
-            $or: [{ email }, { mobile }]
-        });
+        if (email) email = email.trim().toLowerCase();
+        if (mobile) mobile = mobile.trim();
+
+        const query = [];
+        if (email) query.push({ email });
+        if (mobile) query.push({ mobile });
+
+        const userExists = query.length > 0 ? await User.findOne({ $or: query }) : null;
 
         if (userExists) {
-            console.log('User already exists:', email, mobile);
-            res.status(400).json({ message: 'User with this email or mobile already exists' });
-            return;
+            // If user already exists, try to log them in automatically if password matches
+            const isMatch = await userExists.matchPassword(password);
+
+            if (isMatch) {
+                console.log('User already exists, logging in automatically:', email);
+                return res.status(200).json({
+                    _id: userExists._id,
+                    name: userExists.name,
+                    email: userExists.email,
+                    mobile: userExists.mobile,
+                    role: userExists.role,
+                    token: generateToken(userExists._id),
+                    message: 'Logged in automatically'
+                });
+            } else {
+                console.log('User already exists but password mismatch:', email);
+                res.status(400).json({ message: 'User already exists with different credentials' });
+                return;
+            }
         }
 
         // Validate role

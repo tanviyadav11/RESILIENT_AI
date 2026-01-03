@@ -1,7 +1,21 @@
-import React from 'react';
-import { MapContainer, TileLayer, Marker, Popup, LayersControl } from 'react-leaflet';
+import React, { useEffect } from 'react';
+import { useLanguage } from '../context/LanguageContext';
+import { MapContainer, TileLayer, Marker, Popup, LayersControl, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+
+// Helper component to handle map flying
+function ChangeView({ center, zoom }) {
+    const map = useMap();
+    useEffect(() => {
+        if (center && center[0] && center[1]) {
+            map.flyTo(center, zoom, {
+                duration: 1.5
+            });
+        }
+    }, [center, zoom, map]);
+    return null;
+}
 
 // Custom SVG Icons for different severities
 const createCustomIcon = (color) => {
@@ -28,13 +42,16 @@ const icons = {
     default: createCustomIcon('#3b82f6')   // Blue
 };
 
-const MapComponent = ({ requests }) => {
+const MapComponent = ({ requests, focusLocation }) => {
+    const { t } = useLanguage();
     // Default center (India)
-    const position = [20.5937, 78.9629];
+    const defaultPosition = [20.5937, 78.9629];
+    const center = focusLocation || (requests.length > 0 ? [requests[0].location.latitude, requests[0].location.longitude] : defaultPosition);
 
     return (
         <div style={{ height: '400px', borderRadius: '20px', overflow: 'hidden', boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.15)' }}>
-            <MapContainer center={position} zoom={5} scrollWheelZoom={false} style={{ height: '100%', width: '100%' }}>
+            <MapContainer center={center} zoom={focusLocation ? 13 : 5} scrollWheelZoom={false} style={{ height: '100%', width: '100%' }}>
+                <ChangeView center={center} zoom={focusLocation ? 15 : 12} />
                 <LayersControl position="topright">
                     <LayersControl.BaseLayer checked name="Street View">
                         <TileLayer
@@ -70,15 +87,20 @@ const MapComponent = ({ requests }) => {
                                             req.severity === 'medium' ? '#fbbf24' : '#10b981',
                                     textTransform: 'uppercase'
                                 }}>
-                                    {req.severity || 'MEDIUM'} PRIORITY
+                                    {t(req.severity) || req.severity.toUpperCase()} {t('priority') || 'PRIORITY'}
                                 </b>
                                 <br />
                                 <strong>{req.type.toUpperCase()}</strong>
                                 <br />
                                 {req.description}
                                 <br />
+                                {req.location.address && (
+                                    <div style={{ fontSize: '0.85em', color: '#1e293b', marginBottom: '8px', fontStyle: 'italic', maxWidth: '200px', margin: '8px auto' }}>
+                                        📍 {req.location.address}
+                                    </div>
+                                )}
                                 <span style={{ fontSize: '0.85em', color: '#666' }}>
-                                    Status: {req.status}
+                                    {t('status') || 'Status'}: {t(`status${req.status.charAt(0).toUpperCase() + req.status.slice(1)}`)}
                                 </span>
                             </div>
                         </Popup>

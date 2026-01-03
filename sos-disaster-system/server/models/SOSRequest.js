@@ -10,6 +10,9 @@ const sosRequestSchema = mongoose.Schema({
             type: Number,
             required: true,
         },
+        address: {
+            type: String,
+        },
     },
     imageUrl: {
         type: String,

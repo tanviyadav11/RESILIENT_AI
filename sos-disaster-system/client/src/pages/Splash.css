@@ -6,6 +6,7 @@
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     position: relative;
     overflow: hidden;
+    cursor: pointer;
 }
 
 /* Animated background */
@@ -116,57 +117,7 @@
     color: rgba(255, 255, 255, 0.9);
     margin-bottom: 40px;
     font-weight: 500;
-    letter-spacing: 2px;
     animation: slideIn 1s ease-out 0.5s backwards;
-}
-
-/* Loading dots animation */
-.loading-dots {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    animation: fadeIn 1s ease-out 1s backwards;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
-.loading-dots span {
-    width: 12px;
-    height: 12px;
-    background: rgba(255, 255, 255, 0.8);
-    border-radius: 50%;
-    animation: bounce 1.4s infinite ease-in-out;
-}
-
-.loading-dots span:nth-child(1) {
-    animation-delay: -0.32s;
-}
-
-.loading-dots span:nth-child(2) {
-    animation-delay: -0.16s;
-}
-
-@keyframes bounce {
-
-    0%,
-    80%,
-    100% {
-        transform: scale(0);
-        opacity: 0.5;
-    }
-
-    40% {
-        transform: scale(1);
-        opacity: 1;
-    }
 }
 
 /* Responsive */

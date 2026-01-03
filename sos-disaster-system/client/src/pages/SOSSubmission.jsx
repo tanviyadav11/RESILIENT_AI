@@ -3,17 +3,44 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import api from '../services/api';
 import './SOSSubmission.css';
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+
+// Fix Leaflet icon issue
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+    iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+    iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
+
+// Component to handle map clicks
+function LocationMarker({ position, setLocation, fetchAddress }) {
+    useMapEvents({
+        click(e) {
+            const { lat, lng } = e.latlng;
+            setLocation({ latitude: lat, longitude: lng });
+            fetchAddress(lat, lng);
+        },
+    });
+
+    return position.latitude ? (
+        <Marker position={[position.latitude, position.longitude]} />
+    ) : null;
+}
 
 const SOSSubmission = () => {
     const navigate = useNavigate();
     const { t } = useLanguage();
-    const [location, setLocation] = useState({ latitude: null, longitude: null });
+    const [location, setLocation] = useState({ latitude: null, longitude: null, address: '' });
     const [description, setDescription] = useState('');
     const [type, setType] = useState('flood');
     const [severity, setSeverity] = useState('medium');
     const [image, setImage] = useState(null);
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState(null);
+    const [showSuccess, setShowSuccess] = useState(false);
 
     // Check if user is citizen
     useEffect(() => {
@@ -25,14 +52,29 @@ const SOSSubmission = () => {
         }
     }, [navigate]);
 
+    const fetchAddress = async (lat, lon) => {
+        try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+            const data = await response.json();
+            if (data && data.display_name) {
+                setLocation(prev => ({ ...prev, address: data.display_name }));
+            }
+        } catch (error) {
+            console.error("Error fetching address:", error);
+        }
+    };
+
     useEffect(() => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
+                    const { latitude, longitude } = position.coords;
                     setLocation({
-                        latitude: position.coords.latitude,
-                        longitude: position.coords.longitude,
+                        latitude,
+                        longitude,
+                        address: ''
                     });
+                    fetchAddress(latitude, longitude);
                 },
                 (error) => {
                     console.error("Error getting location:", error);
@@ -57,6 +99,7 @@ const SOSSubmission = () => {
         const formData = new FormData();
         formData.append('latitude', location.latitude);
         formData.append('longitude', location.longitude);
+        formData.append('address', location.address || ''); // Added address
         formData.append('description', description);
         formData.append('type', type);
         formData.append('severity', severity);
@@ -69,14 +112,18 @@ const SOSSubmission = () => {
             await api.post('/sos', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
-            setMessage({ text: "SOS Alert Sent Successfully! Help is on the way.", type: "success" });
+
+            // Trigger Success Screen
+            setShowSuccess(true);
+
+            // Clean up
             setDescription('');
             setImage(null);
 
-            // Redirect back to dashboard after 2 seconds
+            // Redirect back to dashboard after 4 seconds (to show off the animation)
             setTimeout(() => {
                 navigate('/dashboard');
-            }, 2000);
+            }, 4000);
         } catch (error) {
             console.error('SOS Error:', error);
             console.error('Error response:', error.response);
@@ -103,7 +150,7 @@ const SOSSubmission = () => {
                 <button className="back-button" onClick={handleBack}>
                     ← {t('backToDashboard')}
                 </button>
-                <h2>🚨 {t('sosReport')}</h2>
+                <h1 className="sos-title">🚨 {t('sosReport')}</h1>
             </div>
 
             {message && (
@@ -114,14 +161,28 @@ const SOSSubmission = () => {
 
             <form onSubmit={handleSubmit} className="sos-form">
                 <div className="form-group">
-                    <label>{t('location')}</label>
+                    <label>{t('location')} *</label>
                     <div className="location-display">
-                        {location.latitude ? (
+                        {location.address ? (
+                            <div className="address-box">
+                                <span className="address-text">📍 {location.address}</span>
+                                <span className="coords-text">({location.latitude.toFixed(6)}, {location.longitude.toFixed(6)})</span>
+                            </div>
+                        ) : location.latitude ? (
                             <span>📍 {location.latitude.toFixed(6)}, {location.longitude.toFixed(6)}</span>
                         ) : (
                             <span>{t('detectingLocation')}</span>
                         )}
                     </div>
+                    {location.latitude && (
+                        <div className="map-picker-container">
+                            <MapContainer center={[location.latitude, location.longitude]} zoom={15} className="sos-map-container">
+                                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                                <LocationMarker position={location} setLocation={setLocation} fetchAddress={fetchAddress} />
+                            </MapContainer>
+                            <p className="map-instruction">{t('clickToAdjustLocation')}</p>
+                        </div>
+                    )}
                 </div>
 
                 <div className="form-group">
@@ -261,6 +322,45 @@ const SOSSubmission = () => {
                     <p className="info-text">⏳ {t('waitingGPS')}</p>
                 )}
             </form>
+
+            {/* Success Overlay (Paytm Style) */}
+            {showSuccess && (
+                <div className="success-overlay">
+                    <div className="success-card">
+                        <div className="checkmark-wrapper">
+                            <div className="checkmark-circle">
+                                <div className="checkmark-stem"></div>
+                                <div className="checkmark-kick"></div>
+                            </div>
+                        </div>
+                        <div className="success-text-content">
+                            <h2 className="success-title">{t('sosSentSuccessfully')}</h2>
+                            <p className="success-description">{t('helpIsOnWay')}</p>
+                            <div className="success-details">
+                                <div className="detail-item">
+                                    <span className="detail-label">{t('type')}:</span>
+                                    <span className="detail-value">{t(type)}</span>
+                                </div>
+                                <div className="detail-item">
+                                    <span className="detail-label">{t('priority')}:</span>
+                                    <span className="detail-value" style={{ color: severity === 'critical' ? '#ef4444' : '#fbbf24' }}>
+                                        {t(severity)}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="redirect-timer">
+                            {t('redirectingToDashboard')}...
+                        </div>
+                    </div>
+                    {/* Confetti Particles */}
+                    <div className="confetti"></div>
+                    <div className="confetti"></div>
+                    <div className="confetti"></div>
+                    <div className="confetti"></div>
+                    <div className="confetti"></div>
+                </div>
+            )}
         </div>
     );
 };

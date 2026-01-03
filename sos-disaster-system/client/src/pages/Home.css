@@ -1,11 +1,14 @@
+/* Main Container */
 .home-container {
     min-height: 100vh;
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    padding: 40px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 60px 20px;
+    font-family: inherit;
     position: relative;
     overflow: hidden;
 }
 
+/* Animated background particles */
 .home-container::before {
     content: '';
     position: absolute;
@@ -28,127 +31,140 @@
 }
 
 .home-content {
-    max-width: 900px;
+    max-width: 1100px;
     margin: 0 auto;
     position: relative;
     z-index: 1;
+    animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Header */
 .home-header {
-    text-align: center;
-    margin-bottom: 40px;
-    color: white;
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-bottom: 50px;
+    animation: fadeInDown 0.8s ease-out;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .app-logo {
-    width: 150px;
-    height: 150px;
+    width: 100px;
+    height: 100px;
     object-fit: contain;
-    margin-bottom: 20px;
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    transition: transform 0.3s ease;
+    margin-bottom: 20px;
+    animation: float 3s ease-in-out infinite;
 }
 
-.app-logo:hover {
-    transform: scale(1.05);
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
 }
 
 .app-title {
-    font-size: 48px;
+    font-size: 52px;
     font-weight: 800;
-    margin-bottom: 12px;
-    text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    color: white;
+    margin: 0;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
-.home-header h1 {
-    font-size: 42px;
-    font-weight: 700;
-    margin-bottom: 12px;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-}
-
-.user-name {
-    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.subtitle {
-    font-size: 18px;
-    opacity: 0.95;
-    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
-}
-
-/* Emergency SOS Button Section */
+/* SOS Button Section */
 .sos-button-section {
-    margin-bottom: 40px;
     display: flex;
     justify-content: center;
+    margin-bottom: 60px;
 }
 
 .emergency-sos-button {
-    position: relative;
-    background: linear-gradient(135deg, #ff4757 0%, #ff6348 100%);
-    border: none;
-    border-radius: 24px;
-    padding: 40px 60px;
-    width: 100%;
-    max-width: 500px;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #ff4757, #ff6b81);
+    border: 15px solid rgba(255, 255, 255, 0.2);
     cursor: pointer;
-    box-shadow: 0 20px 60px rgba(255, 71, 87, 0.5);
-    transition: all 0.3s ease;
-    overflow: hidden;
-}
-
-.emergency-sos-button::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    transition: left 0.6s ease;
-}
-
-.emergency-sos-button:hover::before {
-    left: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 20px 50px rgba(255, 71, 87, 0.4);
 }
 
 .emergency-sos-button:hover {
-    transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 25px 70px rgba(255, 71, 87, 0.6);
+    transform: scale(1.05);
+    box-shadow: 0 30px 60px rgba(255, 71, 87, 0.6);
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
 .emergency-sos-button:active {
-    transform: translateY(-2px) scale(1.0);
+    transform: scale(0.95);
 }
 
 .sos-icon {
     font-size: 80px;
-    margin-bottom: 15px;
-    animation: pulse 2s ease-in-out infinite;
+    margin-bottom: 10px;
+    animation: ring 2s ease-in-out infinite;
 }
 
-@keyframes pulse {
+@keyframes ring {
 
     0%,
     100% {
-        transform: scale(1);
+        transform: rotate(0deg);
     }
 
+    10%,
+    30%,
     50% {
-        transform: scale(1.1);
+        transform: rotate(-10deg);
+    }
+
+    20%,
+    40%,
+    60% {
+        transform: rotate(10deg);
+    }
+
+    70% {
+        transform: rotate(0deg);
     }
 }
 
@@ -156,41 +172,33 @@
     color: white;
     font-size: 32px;
     font-weight: 800;
-    margin: 0 0 8px 0;
-    letter-spacing: 2px;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    margin: 0;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .sos-text p {
-    color: rgba(255, 255, 255, 0.95);
-    font-size: 16px;
-    margin: 0;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
+    margin-top: 5px;
 }
 
-/* Pulse Ring Animation */
 .pulse-ring {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     width: 100%;
     height: 100%;
-    border: 4px solid rgba(255, 255, 255, 0.6);
-    border-radius: 24px;
-    animation: pulseRing 2s ease-out infinite;
-    pointer-events: none;
+    border-radius: 50%;
+    border: 4px solid #ff4757;
+    animation: pulse 2s ease-out infinite;
 }
 
-@keyframes pulseRing {
+@keyframes pulse {
     0% {
-        width: 100%;
-        height: 100%;
+        transform: scale(1);
         opacity: 1;
     }
 
     100% {
-        width: 120%;
-        height: 120%;
+        transform: scale(1.5);
         opacity: 0;
     }
 }
@@ -256,86 +264,24 @@
 
 .emergency-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 15px;
 }
 
 .emergency-type {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    color: white;
-    padding: 15px;
+    background: rgba(241, 242, 246, 0.8);
+    padding: 12px;
     border-radius: 12px;
     text-align: center;
     font-weight: 600;
-    font-size: 15px;
-    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+    color: #2f3542;
     transition: all 0.3s ease;
 }
 
 .emergency-type:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(245, 87, 108, 0.4);
-}
-
-/* Admin Dashboard Button */
-.admin-button-section {
-    margin-bottom: 40px;
-    display: flex;
-    justify-content: center;
-}
-
-.admin-dashboard-button {
-    position: relative;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border: none;
-    border-radius: 24px;
-    padding: 40px 60px;
-    width: 100%;
-    max-width: 500px;
-    cursor: pointer;
-    box-shadow: 0 20px 60px rgba(102, 126, 234, 0.5);
-    transition: all 0.3s ease;
-    overflow: hidden;
-}
-
-.admin-dashboard-button::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    transition: left 0.6s ease;
-}
-
-.admin-dashboard-button:hover::before {
-    left: 100%;
-}
-
-.admin-dashboard-button:hover {
-    transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 25px 70px rgba(102, 126, 234, 0.6);
-}
-
-.admin-icon {
-    font-size: 80px;
-    margin-bottom: 15px;
-}
-
-.admin-text h2 {
-    color: white;
-    font-size: 32px;
-    font-weight: 800;
-    margin: 0 0 8px 0;
-    letter-spacing: 2px;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-}
-
-.admin-text p {
-    color: rgba(255, 255, 255, 0.95);
-    font-size: 16px;
-    margin: 0;
+    background: white;
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 /* Logout Button */
@@ -344,42 +290,74 @@
     margin: 0 auto;
     padding: 12px 40px;
     background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    border: 2px solid rgba(255, 255, 255, 0.5);
-    border-radius: 12px;
+    border: 2px solid white;
     color: white;
-    font-size: 16px;
-    font-weight: 600;
+    border-radius: 30px;
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
 }
 
 .logout-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: translateY(-2px);
+    background: white;
+    color: #ff4757;
+}
+
+/* Admin Button Section */
+.admin-button-section {
+    display: flex;
+    justify-content: center;
+    margin: 60px 0;
+}
+
+.admin-dashboard-button {
+    width: 350px;
+    padding: 50px;
+    border-radius: 20px;
+    background: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.admin-dashboard-button:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+}
+
+.admin-icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+}
+
+.admin-text h2 {
+    color: #2f3542;
+    font-size: 28px;
+    font-weight: 800;
+    margin: 0;
+}
+
+.admin-text p {
+    color: #57606f;
+    font-size: 16px;
+    margin-top: 10px;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-    .app-logo {
-        width: 120px;
-        height: 120px;
-    }
-
     .app-title {
-        font-size: 36px;
-    }
-
-    .home-header h1 {
-        font-size: 32px;
-    }
-
-    .subtitle {
-        font-size: 16px;
+        font-size: 40px;
     }
 
     .emergency-sos-button {
-        padding: 30px 40px;
+        width: 250px;
+        height: 250px;
     }
 
     .sos-icon {
@@ -387,18 +365,11 @@
     }
 
     .sos-text h2 {
-        font-size: 24px;
+        font-size: 26px;
     }
 
-    .sos-text p {
-        font-size: 14px;
-    }
-
-    .info-cards {
-        grid-template-columns: 1fr;
-    }
-
-    .emergency-grid {
-        grid-template-columns: repeat(2, 1fr);
+    .admin-dashboard-button {
+        width: 100%;
+        padding: 30px;
     }
 }

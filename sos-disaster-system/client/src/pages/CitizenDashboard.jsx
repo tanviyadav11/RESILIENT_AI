@@ -133,10 +133,17 @@ const CitizenDashboard = () => {
                             {sosHistory.map((sos) => (
                                 <div key={sos._id} className="sos-history-card">
                                     <div className="sos-card-header">
-                                        <span className="sos-type">{t(sos.type) || sos.type}</span>
-                                        <span className={`sos-status status-${sos.status}`} style={{ color: getStatusColor(sos.status) }}>
-                                            {t(`status${sos.status.charAt(0).toUpperCase() + sos.status.slice(1)}`)}
-                                        </span>
+                                        <div className="type-group">
+                                            <span className="label-text">{t('type')}: </span>
+                                            <span className="sos-type">{t(sos.type) || sos.type}</span>
+                                        </div>
+                                        <div className="status-group">
+                                            <span className={`sos-status status-${sos.status}`} style={{ color: getStatusColor(sos.status) }}>
+                                                {sos.status === 'pending' ? t('statusPending') :
+                                                    sos.status === 'dispatched' ? t('statusDispatched') :
+                                                        t('statusResolved')}
+                                            </span>
+                                        </div>
                                     </div>
                                     <div className="sos-card-body">
                                         <span className="sos-date">{new Date(sos.createdAt).toLocaleDateString()} {new Date(sos.createdAt).toLocaleTimeString()}</span>
@@ -171,7 +178,7 @@ const CitizenDashboard = () => {
             </div>
 
             {/* Chat Window */}
-            {activeChatRequest && userInfo && (
+            {activeChatRequest && userInfo && userInfo._id && (
                 <ChatWindow
                     sosRequestId={activeChatRequest._id}
                     currentUser={userInfo}
